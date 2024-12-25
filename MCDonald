@@ -1,0 +1,80 @@
+
+--지점 테이블
+--지점의 값을 넣는 용도
+--동의과학대학교를 기준으로 약 3Km 거리까지 (시청DT점, 부산범전DT점, 서면점)
+--(지점의 번호, 지점 이름, 지점 주소, 지점 연락처, 드라이브스루 유무)
+create table branch(
+   bno number(10)
+   CONSTRAINT BRANCH_BNO_NN NOT NULL,
+   bname varchar2(100)
+   CONSTRAINT BRANCH_BNAME_NN NOT NULL,
+   adress varchar2(255),
+   tel varchar2(15),
+   dthru number(1),
+   CONSTRAINT BRANCH_BNO_PK PRIMARY KEY(BNO)
+);
+
+--메뉴 테이블
+--맥도날드 메뉴의 정보를 보여주기 위한 용도
+--(각 메뉴의 번호, 메뉴 이름, 메뉴 가격, 메뉴 칼로리)
+create table menu (
+   mno number(10)
+   CONSTRAINT MENU_MNO_NN NOT NULL,
+   mname varchar2(100)
+   CONSTRAINT MENU_MNAME_NN NOT NULL,
+   mprice number(10)
+   CONSTRAINT MENU_MPRICE_NN NOT NULL,
+   mkcal number(5),
+   CONSTRAINT MENU_MNO_PK PRIMARY KEY(MNO)
+);
+
+--분류 테이블
+--각 메뉴의 분류를 담당하는 용도
+--(분류 번호 , 분류 이름)
+--(ex > 01: 버거, 02: 사이드, 03: 음료)
+create table class(
+   cno number(4)
+   CONSTRAINT CLASS_CNO_NN NOT NULL,
+   cname varchar2(50)
+   CONSTRAINT CLASS_CNAME_NN NOT NULL,
+   mno number(10),
+   CONSTRAINT CLASS_PK PRIMARY KEY(CNO, MNO),
+   CONSTRAINT CLASS_MNO_FK FOREIGN KEY(MNO)
+   REFERENCES MENU(MNO)
+);
+
+--주문 테이블
+--메뉴를 선택하고 주문했을 때 출력하는 용도
+--(하루 중 몇 번째 인지 알려주는 주문 번호, 주문 한 날짜, 선택한 음식들의 총 칼로리, 선택한 음식들의 총 금액)
+create table dayorder(
+   ono number(10)
+   CONSTRAINT DAYORDER_ONO_NN NOT NULL,
+   tkcal number(5),
+   odate date
+   CONSTRAINT DAYORDER_ODATE_NN NOT NULL,
+   total number(8)
+   CONSTRAINT DAYORDER_TOTAL_NN NOT NULL,
+   bno number(10),
+   CONSTRAINT DAYORDER_ONO_PK PRIMARY KEY(ONO),
+   CONSTRAINT DAYORDER_BNO_FK FOREIGN KEY(BNO)
+   REFERENCES BRANCH(BNO)
+);
+
+--메뉴 선택 테이블
+--메뉴들을 선택하고 수량 및 금액을 출력하기위한 용도
+--주문테이블과 메뉴 테이블에서 선택한 값을 메뉴선택 테이블로 넘어오고 이 값이 합쳐져서 최종적인 메뉴가 선택 됨.
+create table choomenu(
+   cno number(10)
+   CONSTRAINT CHOOMENU_CNO_NN NOT NULL,
+   cquan number(2)
+   CONSTRAINT CHOOMENU_SQUAN_NN NOT NULL,
+   cprice number(7)
+   CONSTRAINT CHOOMENU_CPRICE_NN NOT NULL,
+   ono number(10),
+   mno number(10),
+   CONSTRAINT CHOOMENU_CNO_PK PRIMARY KEY(CNO),
+   CONSTRAINT CHOOMENU_ONO_FK FOREIGN KEY(ONO)
+   REFERENCES DAYORDER(ONO),
+   CONSTRAINT CHOOMENU_MNO_FK FOREIGN KEY(MNO)
+   REFERENCES MENU(MNO)
+);
