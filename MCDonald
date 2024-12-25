@@ -246,3 +246,9 @@ INSERT INTO CHOOMENU (CNO, CQUAN, CPRICE, ONO, MNO)
 VALUES (3, 2, 4000, 3, 37);  -- 콜라 1개
 
 select * from choomenu;
+
+select * from branch;
+select * from menu;
+select * from class;
+select * from dayorder
+select * from choomenu;
